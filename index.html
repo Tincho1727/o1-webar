@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualize Omni One in Your Space | Virtuix AR</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Titillium Web', sans-serif;
+      background-color: #0c0c0c;
+      color: #ffffff;
+    }
+
+    header {
+      background-color: #000000;
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      border-bottom: 4px solid #00ffc8;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      color: #00ffc8;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .viewer-container {
+      width: 100%;
+      max-width: 960px;
+      margin: 3rem auto 2rem;
+      padding: 0 1rem;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 550px;
+      border-radius: 10px;
+      background-color: #1a1a1a;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.25);
+      border: 2px solid #00ffc8;
+    }
+
+    .instructions {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      font-size: 1.15rem;
+      color: #cccccc;
+      padding: 0 1rem;
+    }
+
+    .qr-section {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .qr-section p {
+      font-size: 1rem;
+      color: #eeeeee;
+    }
+
+    .qr-section img {
+      margin-top: 1rem;
+      width: 160px;
+      height: 160px;
+      border: 2px solid #00ffc8;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .footer {
+      background-color: #000;
+      text-align: center;
+      padding: 1rem;
+      color: #888;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Visualize Omni One in Your Space</h1>
+  </header>
+
+  <div class="viewer-container">
+    <model-viewer 
+      src="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/CesiumMan/glTF-Binary/CesiumMan.glb"
+      alt="Placeholder for Omni One VR treadmill"
+      ar
+      ar-modes="scene-viewer quick-look"
+      auto-rotate
+      camera-controls
+      ios-src="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/CesiumMan/glTF-Binary/CesiumMan.usdz"
+      shadow-intensity="1">
+    </model-viewer>
+  </div>
+
+  <div class="instructions">
+    <p>
+      Use your mobile device to place a true-to-scale Omni One in your room using Augmented Reality.
+      Move, rotate, and explore how it fits in your space before you buy.
+    </p>
+  </div>
+
+  <div class="qr-section">
+    <p>Scan this QR code to launch the AR experience on your mobile device:</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models@master/2.0/CesiumMan/glTF-Binary/CesiumMan.glb&size=150x150" alt="QR Code to AR Experience" />
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Virtuix. All rights reserved.
+  </div>
+</body>
+</html>
