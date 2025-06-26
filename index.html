@@ -77,5 +77,79 @@
       color: #cccccc;
     }
 
-    .qr-section img
+    .qr-section img {
+      margin-top: 1rem;
+      width: 150px;
+      height: 150px;
+      border: 2px solid #00ffc8;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+    }
 
+    .demo-button {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #000;
+      background-color: #00ffc8;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .demo-button:hover {
+      background-color: #00e6b4;
+      transform: scale(1.03);
+    }
+
+    .footer {
+      background-color: transparent;
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #888;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Visualize Omni One in Your Space</h1>
+  </header>
+
+  <div class="viewer-container">
+    <model-viewer 
+      src="https://modelviewer.dev/shared-assets/models/Chair.glb"
+      ios-src="https://modelviewer.dev/shared-assets/models/Chair.usdz"
+      alt="Placeholder for Omni One VR treadmill"
+      ar
+      ar-modes="scene-viewer quick-look"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1">
+    </model-viewer>
+  </div>
+
+  <div class="instructions">
+    <p>
+      Use your mobile device to place a true-to-scale Omni One in your room using Augmented Reality. <br>
+      Move, rotate, and explore how it fits in your space before you buy.
+    </p>
+  </div>
+
+  <div class="qr-section">
+    <p>Scan this QR code to launch the AR experience on your phone:</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://tincho1727.github.io/omni-one-webar/&size=180x180" alt="QR Code to AR Experience" />
+    <br />
+    <a class="demo-button" href="https://virtuix.as.me/?calendarID=11542441" target="_blank">Book a Demo</a>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Virtuix. All rights reserved.
+  </div>
+</body>
+</html>
