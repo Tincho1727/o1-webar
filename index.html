@@ -235,47 +235,51 @@
     "thursday", "friday", "saturday"
   ];
 
-  async function loadScheduleFromSheet() {
-    const res = await fetch(SHEET_CSV_URL);
-    const csv = await res.text();
+ async function loadScheduleFromSheet() {
+  const res = await fetch(SHEET_CSV_URL);
+  const csv = await res.text();
 
-    const lines = csv.trim().split(/\r?\n/);
-    if (lines.length < 2) return;
+  const lines = csv.trim().split(/\r?\n/);
+  if (lines.length < 2) return;
 
-    const sched = {};
-    const hours = {};
+  const sched = {};
+  const hours = {};
 
-    // We ignore the header row (lines[0]) and use fixed column positions
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
+  // Detect delimiter: ; (common in ES locales) or ,
+  const delimiter = lines[0].includes(";") ? ";" : ",";
 
-      const cols = lines[i].split(",");
-      // Col order: 0=day_key, 1=open, 2=close, 3=on_duty
-      const dayKeyRaw  = (cols[0] || "").trim().toLowerCase();
-      const openRaw    = (cols[1] || "").trim();
-      const closeRaw   = (cols[2] || "").trim();
-      const onDutyRaw  = (cols[3] || "").trim();
+  // We ignore the header row (lines[0]) and use fixed column positions
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
 
-      if (!dayKeyRaw) continue;
+    const cols = lines[i].split(delimiter);
+    // Col order: 0=day_key, 1=open, 2=close, 3=on_duty
+    const dayKeyRaw  = (cols[0] || "").trim().toLowerCase();
+    const openRaw    = (cols[1] || "").trim();
+    const closeRaw   = (cols[2] || "").trim();
+    const onDutyRaw  = (cols[3] || "").trim();
 
-      const dayKey = dayKeyRaw;
-      const open = openRaw || "10:00";
-      const close = closeRaw || "18:00";
+    if (!dayKeyRaw) continue;
 
-      const people = onDutyRaw
-        ? onDutyRaw.split(/[;|]/).map(p => p.trim()).filter(Boolean)
-        : [];
+    const dayKey = dayKeyRaw;
+    const open = openRaw || "10:00";
+    const close = closeRaw || "18:00";
 
-      sched[dayKey] = people;
-      hours[dayKey] = { open, close };
-    }
+    const people = onDutyRaw
+      ? onDutyRaw.split(/[;|]/).map(p => p.trim()).filter(Boolean)
+      : [];
 
-    schedule = sched;
-    businessHours = hours;
-
-    console.log("Loaded schedule:", schedule);
-    console.log("Loaded businessHours:", businessHours);
+    sched[dayKey] = people;
+    hours[dayKey] = { open, close };
   }
+
+  schedule = sched;
+  businessHours = hours;
+
+  console.log("Loaded schedule:", schedule);
+  console.log("Loaded businessHours:", businessHours);
+}
+
 
   function isOpenNow(dayKey, now) {
     const hours = businessHours[dayKey];
