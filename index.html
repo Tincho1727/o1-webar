@@ -2,155 +2,381 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Visualize Omni One in Your Space | Virtuix AR</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Support Schedule</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Titillium Web', sans-serif;
-      background: linear-gradient(to bottom, #050505, #0f0f0f);
-      color: #ffffff;
-      overflow-x: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://www.transparenttextures.com/patterns/cubes.png');
-      opacity: 0.03;
-      z-index: -1;
-    }
-
-    header {
-      background: transparent;
-      text-align: center;
-      padding: 3rem 1rem 1.5rem;
-      border-bottom: 1px solid #00ffc8;
-    }
-
-    header h1 {
-      font-size: 2.7rem;
-      color: #00ffc8;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .viewer-container {
-      width: 100%;
+    .container {
       max-width: 900px;
-      margin: 3rem auto 2rem;
-      padding: 0 1rem;
+      margin: 0 auto;
+      padding: 24px;
     }
 
-    model-viewer {
-      width: 100%;
-      height: 520px;
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .now-card {
       border-radius: 12px;
-      background-color: #121212;
-      border: 1px solid #00ffc8;
-      box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      background: #020617;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .instructions {
-      text-align: center;
-      max-width: 700px;
-      margin: 0 auto 3rem;
-      font-size: 1.1rem;
-      color: #c0c0c0;
-      padding: 0 1rem;
-      line-height: 1.6;
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .qr-section {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .qr-section p {
-      font-size: 1rem;
-      color: #cccccc;
-    }
-
-    .qr-section img {
-      margin-top: 1rem;
-      width: 150px;
-      height: 150px;
-      border: 2px solid #00ffc8;
-      border-radius: 8px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
-    }
-
-    .demo-button {
-      display: inline-block;
-      margin-top: 2rem;
-      padding: 0.75rem 1.5rem;
-      font-size: 1.1rem;
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 13px;
       font-weight: 600;
-      color: #000;
-      background-color: #00ffc8;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .demo-button:hover {
-      background-color: #00e6b4;
-      transform: scale(1.03);
+    .status-open {
+      background: rgba(34, 197, 94, 0.16);
+      color: #4ade80;
+    }
+
+    .status-closed {
+      background: rgba(248, 113, 113, 0.16);
+      color: #fb7185;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .now-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .now-subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .now-people {
+      margin-top: 8px;
+      font-size: 15px;
+    }
+
+    .now-people span {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #020617;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    thead {
+      background: #020617;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+      color: #9ca3af;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #020617;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: #020617;
+    }
+
+    tbody tr + tr td {
+      border-top: 1px solid #111827;
+    }
+
+    .today-row {
+      background: #111827;
+    }
+
+    .today-badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+      margin-left: 8px;
     }
 
     .footer {
-      background-color: transparent;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #6b7280;
       text-align: center;
-      padding: 2rem 1rem;
-      color: #888;
-      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 16px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      th, td {
+        padding: 8px 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Visualize Omni One in Your Space</h1>
-  </header>
+  <div class="container">
+    <h1>Omni Arena & Omni One Support Schedule</h1>
 
-  <div class="viewer-container">
-    <model-viewer 
-      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-      ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
-      alt="Placeholder model"
-      ar
-      ar-modes="scene-viewer quick-look"
-      auto-rotate
-      camera-controls
-      shadow-intensity="1"
-      style="width: 100%; height: 500px;">
-    </model-viewer>
+    <div class="container">
+        <!-- HEADER WITH VIRTUIX LOGO -->
+        <div class="header">
+            <img
+            src="omniarena_logo_color2.png"
+            alt="Virtuix logo"
+            style="max-width: 140px; height: auto; display: block; margin: 0 auto 16px;"
+          >
+          
+          
+        </div>
+    
+    <div class="now-card">
+      <div class="status-row">
+        <div>
+          <div id="status-pill" class="status-pill">
+            <div class="dot"></div>
+            <span id="status-text">Checking...</span>
+          </div>
+          <div class="now-title" id="now-title">Now</div>
+          <div class="now-subtitle" id="now-subtitle"></div>
+        </div>
+        <div class="now-subtitle" id="now-time"></div>
+      </div>
+      <div class="now-people" id="now-people"></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Business hours</th>
+          <th>On duty</th>
+        </tr>
+      </thead>
+      <tbody id="schedule-body">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+
+    <div class="footer">
+      Schedule for Martin &amp; Jonathan • Autoupdates based on current day and time
+    </div>
   </div>
 
-  <div class="instructions">
-    <p>
-      Use your mobile device to place a true-to-scale Omni One in your room using Augmented Reality. <br>
-      Move, rotate, and explore how it fits in your space before you buy.
-    </p>
-  </div>
+  <script>
+    // ====== CONFIGURACIÓN FÁCIL DE EDITAR ======
 
-  <div class="qr-section">
-    <p>Scan this QR code to launch the AR experience on your phone:</p>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://tincho1727.github.io/o1-webar/&size=180x180" alt="QR Code to AR Experience" />
-    <br />
-    <a class="demo-button" href="https://virtuix.as.me/?calendarID=11542441" target="_blank">Book a Demo</a>
-  </div>
+    // Quién trabaja cada día (puedes editar esto cuando cambien roles)
+    const schedule = {
+      sunday: ["Jonathan"],
+      monday: ["Martin", "Jonathan"],
+      tuesday: ["Martin", "Jonathan"],
+      wednesday: ["Martin", "Jonathan"],
+      thursday: ["Martin"],
+      friday: ["Martin"],
+      saturday: ["Jonathan"]
+    };
 
-  <div class="footer">
-    &copy; 2025 Virtuix. All rights reserved.
-  </div>
+    // Horario de operación por día
+    // Formato 24h: { open: "HH:MM", close: "HH:MM" }
+    const businessHours = {
+      sunday:   { open: "10:00", close: "18:00" },
+      monday:   { open: "10:00", close: "18:00" },
+      tuesday:  { open: "10:00", close: "18:00" },
+      wednesday:{ open: "10:00", close: "18:00" },
+      thursday: { open: "10:00", close: "18:00" },
+      friday:   { open: "10:00", close: "21:00" },
+      saturday: { open: "10:00", close: "21:00" }
+    };
+
+    const dayNames = [
+      "Sunday", "Monday", "Tuesday", "Wednesday",
+      "Thursday", "Friday", "Saturday"
+    ];
+
+    const keyByIndex = [
+      "sunday", "monday", "tuesday", "wednesday",
+      "thursday", "friday", "saturday"
+    ];
+
+    // ====== LÓGICA ======
+
+    function isOpenNow(dayKey, now) {
+      const hours = businessHours[dayKey];
+      if (!hours) return false;
+
+      const [openH, openM] = hours.open.split(":").map(Number);
+      const [closeH, closeM] = hours.close.split(":").map(Number);
+
+      const openMinutes = openH * 60 + openM;
+      const closeMinutes = closeH * 60 + closeM;
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+    }
+
+    function formatHours(dayKey) {
+      const hours = businessHours[dayKey];
+      if (!hours) return "Closed";
+
+      const to12h = (timeStr) => {
+        const [hStr, mStr] = timeStr.split(":");
+        let h = Number(hStr);
+        const m = mStr;
+        const suffix = h >= 12 ? "PM" : "AM";
+        if (h === 0) h = 12;
+        else if (h > 12) h -= 12;
+        return `${h}:${m}${suffix}`;
+      };
+
+      return `${to12h(hours.open)} – ${to12h(hours.close)}`;
+    }
+
+    function initSchedule() {
+      const tbody = document.getElementById("schedule-body");
+      const now = new Date();
+      const todayIndex = now.getDay(); // 0=Sun..6=Sat
+      const todayKey = keyByIndex[todayIndex];
+
+      // Rellenar tabla semanal
+      for (let i = 0; i < 7; i++) {
+        const dayName = dayNames[i];
+        const key = keyByIndex[i];
+        const row = document.createElement("tr");
+
+        if (i === todayIndex) {
+          row.classList.add("today-row");
+        }
+
+        const people = schedule[key] && schedule[key].length
+          ? schedule[key].join(", ")
+          : "—";
+
+        const tdDay = document.createElement("td");
+        tdDay.textContent = dayName;
+        if (i === todayIndex) {
+          const badge = document.createElement("span");
+          badge.className = "today-badge";
+          badge.textContent = "Today";
+          tdDay.appendChild(badge);
+        }
+
+        const tdHours = document.createElement("td");
+        tdHours.textContent = formatHours(key);
+
+        const tdPeople = document.createElement("td");
+        tdPeople.textContent = people;
+
+        row.appendChild(tdDay);
+        row.appendChild(tdHours);
+        row.appendChild(tdPeople);
+
+        tbody.appendChild(row);
+      }
+
+      updateNowCard();
+      // Actualiza cada 60 segundos por si dejas la página siempre abierta
+      setInterval(updateNowCard, 60000);
+    }
+
+    function updateNowCard() {
+      const now = new Date();
+      const todayIndex = now.getDay();
+      const todayKey = keyByIndex[todayIndex];
+
+      const statusPill = document.getElementById("status-pill");
+      const statusText = document.getElementById("status-text");
+      const nowTitle = document.getElementById("now-title");
+      const nowSubtitle = document.getElementById("now-subtitle");
+      const nowPeople = document.getElementById("now-people");
+      const nowTime = document.getElementById("now-time");
+
+      const open = isOpenNow(todayKey, now);
+
+      // Limpia clases previas
+      statusPill.classList.remove("status-open", "status-closed");
+
+      if (open) {
+        statusPill.classList.add("status-open");
+        statusText.textContent = "Open";
+      } else {
+        statusPill.classList.add("status-closed");
+        statusText.textContent = "Closed";
+      }
+
+      nowTitle.textContent = dayNames[todayIndex];
+      nowSubtitle.textContent = formatHours(todayKey);
+
+      const peopleToday = schedule[todayKey] || [];
+      if (open && peopleToday.length) {
+        nowPeople.innerHTML = `On duty now: <span>${peopleToday.join(", ")}</span>`;
+      } else if (!open) {
+        nowPeople.textContent = "Outside business hours.";
+      } else {
+        nowPeople.textContent = "No one assigned today.";
+      }
+
+      const pad = (n) => n.toString().padStart(2, "0");
+      const hours = pad(now.getHours());
+      const minutes = pad(now.getMinutes());
+      nowTime.textContent = `Current time: ${hours}:${minutes}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", initSchedule);
+  </script>
 </body>
 </html>
