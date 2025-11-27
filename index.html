@@ -219,7 +219,7 @@
 
   <script>
     // ====== CONFIG: URL of your published Google Sheet CSV ======
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_P-MDtJ5_22Dftrk9JC9gQmaWzIM_YLBVEJ7n_hyU4bm4PSgzUbWOdIB-e184eJpaL2SUqB92tumS/pub?output=csv";
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_P-MDtJ5_22Dftrk9JC9gQmaWzlM_YL8VEJ7n_hyU4bm4PSgzUbW0dIB-e184eJpaL2SUqB92tumS/pub?output=csv";
   
     // These will be filled dynamically from the sheet
     let schedule = {};
@@ -239,25 +239,41 @@
       const res = await fetch(SHEET_CSV_URL);
       const csv = await res.text();
   
-      const lines = csv.trim().split("\n");
-      const header = lines[0].split(",");
+      const lines = csv.trim().split(/\r?\n/);
+      if (lines.length < 2) return;
   
-      const idxDay   = header.indexOf("day_key");
-      const idxOpen  = header.indexOf("open");
-      const idxClose = header.indexOf("close");
-      const idxOn    = header.indexOf("on_duty");
+      // Detect separator: , or ;
+      const delimiter = lines[0].includes(";") ? ";" : ",";
+  
+      const rawHeader = lines[0].split(delimiter);
+      const header = rawHeader.map(h => h.trim().toLowerCase());
+  
+      const findIndex = (candidates) =>
+        header.findIndex(h => candidates.includes(h));
+  
+      // Try to find columns (admite "day_key" o "day", "on_duty" o "on duty", etc.)
+      const idxDay   = findIndex(["day_key", "day"]);
+      const idxOpen  = findIndex(["open"]);
+      const idxClose = findIndex(["close"]);
+      const idxOn    = findIndex(["on_duty", "on duty", "onduty"]);
   
       const sched = {};
       const hours = {};
   
       for (let i = 1; i < lines.length; i++) {
         if (!lines[i].trim()) continue;
-        const cols = lines[i].split(",");
   
-        const dayKey = cols[idxDay].trim().toLowerCase();
-        const open   = cols[idxOpen].trim();
-        const close  = cols[idxClose].trim();
-        const onDutyRaw = cols[idxOn] ? cols[idxOn].trim() : "";
+        const cols = lines[i].split(delimiter);
+        const get = (idx) =>
+          idx >= 0 && idx < cols.length ? cols[idx].trim() : "";
+  
+        const dayKeyRaw = get(idxDay).toLowerCase();
+        if (!dayKeyRaw) continue;
+  
+        const dayKey = dayKeyRaw; // e.g. "monday"
+        const open   = get(idxOpen)  || "10:00";
+        const close  = get(idxClose) || "18:00";
+        const onDutyRaw = get(idxOn);
   
         const people = onDutyRaw
           ? onDutyRaw.split(/[;|]/).map(p => p.trim()).filter(Boolean)
@@ -401,6 +417,6 @@
     });
   </script>
   
+  
 </body>
 </html>
-
