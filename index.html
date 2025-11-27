@@ -200,17 +200,18 @@
     </div>
 
     <table>
-      <thead>
-        <tr>
-          <th>Day</th>
-          <th>Business hours</th>
-          <th>On duty</th>
-        </tr>
-      </thead>
-      <tbody id="schedule-body">
-        <!-- Filled by JS -->
-      </tbody>
-    </table>
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Business hours</th>
+      <th>On duty</th>
+      <th>Notes</th>   <!-- NUEVA COLUMNA -->
+    </tr>
+  </thead>
+  <tbody id="schedule-body">
+    <!-- Filled by JS -->
+  </tbody>
+</table>
 
     <div class="footer">
       Schedule for Martin &amp; Jonathan • Autoupdates based on current day and time
@@ -224,6 +225,7 @@
   // These will be filled dynamically from the sheet
   let schedule = {};
   let businessHours = {};
+  let notesByDay = {};
 
  // For Date.getDay() -> key (0 = Sunday, 6 = Saturday)
 const keyByIndex = [
@@ -267,15 +269,17 @@ const displayOrder = [
   const delimiter = lines[0].includes(";") ? ";" : ",";
 
   // We ignore the header row (lines[0]) and use fixed column positions
+  // We ignore the header row (lines[0]) and use fixed column positions
   for (let i = 1; i < lines.length; i++) {
     if (!lines[i].trim()) continue;
 
     const cols = lines[i].split(delimiter);
-    // Col order: 0=day_key, 1=open, 2=close, 3=on_duty
+    // Col order: 0=day_key, 1=open, 2=close, 3=on_duty, 4=notes
     const dayKeyRaw  = (cols[0] || "").trim().toLowerCase();
     const openRaw    = (cols[1] || "").trim();
     const closeRaw   = (cols[2] || "").trim();
     const onDutyRaw  = (cols[3] || "").trim();
+    const notesRaw   = (cols[4] || "").trim();  // NUEVO
 
     if (!dayKeyRaw) continue;
 
@@ -289,10 +293,12 @@ const displayOrder = [
 
     sched[dayKey] = people;
     hours[dayKey] = { open, close };
+    notesByDay[dayKey] = notesRaw;   // NUEVO
   }
 
   schedule = sched;
   businessHours = hours;
+  // notesByDay ya está actualizado
 
   console.log("Loaded schedule:", schedule);
   console.log("Loaded businessHours:", businessHours);
@@ -347,18 +353,17 @@ const displayOrder = [
       row.classList.add("today-row");
     }
 
-    const people = schedule[key] && schedule[key].length
+       const people = schedule[key] && schedule[key].length
       ? schedule[key].join(", ")
+      : "—";
+
+    const note = notesByDay[key] && notesByDay[key].length
+      ? notesByDay[key]
       : "—";
 
     const tdDay = document.createElement("td");
     tdDay.textContent = dayName;
-    if (key === todayKey) {
-      const badge = document.createElement("span");
-      badge.className = "today-badge";
-      badge.textContent = "Today";
-      tdDay.appendChild(badge);
-    }
+    // ...
 
     const tdHours = document.createElement("td");
     tdHours.textContent = formatHours(key);
@@ -366,9 +371,13 @@ const displayOrder = [
     const tdPeople = document.createElement("td");
     tdPeople.textContent = people;
 
+    const tdNotes = document.createElement("td");  // NUEVO
+    tdNotes.textContent = note;                   // NUEVO
+
     row.appendChild(tdDay);
     row.appendChild(tdHours);
     row.appendChild(tdPeople);
+    row.appendChild(tdNotes);                     // NUEVO
 
     tbody.appendChild(row);
   }
