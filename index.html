@@ -225,15 +225,33 @@
   let schedule = {};
   let businessHours = {};
 
- const dayNames = [
-      "Monday", "Tuesday", "Wednesday",
-      "Thursday", "Friday", "Saturday", "Sunday" 
-    ];
-  
-    const keyByIndex = [
-      "monday", "tuesday", "wednesday",
-      "thursday", "friday", "saturday", "sunday"
-    ];
+ // For Date.getDay() -> key (0 = Sunday, 6 = Saturday)
+const keyByIndex = [
+  "sunday", "monday", "tuesday", "wednesday",
+  "thursday", "friday", "saturday"
+];
+
+// Label per key
+const dayLabel = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday"
+};
+
+// Order in which we want to DISPLAY rows (Mon -> Sun)
+const displayOrder = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday"
+];
 
  async function loadScheduleFromSheet() {
   const res = await fetch(SHEET_CSV_URL);
@@ -312,52 +330,53 @@
     return `${to12h(hours.open)} – ${to12h(hours.close)}`;
   }
 
-  function initSchedule() {
-    const tbody = document.getElementById("schedule-body");
-    tbody.innerHTML = "";
+ function initSchedule() {
+  const tbody = document.getElementById("schedule-body");
+  tbody.innerHTML = "";
 
-    const now = new Date();
-    const todayIndex = now.getDay();
-    const todayKey = keyByIndex[todayIndex];
+  const now = new Date();
+  const todayIndex = now.getDay();        // 0–6
+  const todayKey = keyByIndex[todayIndex]; // "monday", "tuesday", etc.
 
-    for (let i = 0; i < 7; i++) {
-      const dayName = dayNames[i];
-      const key = keyByIndex[i];
-      const row = document.createElement("tr");
+  // Render in custom order (Monday -> Sunday)
+  for (const key of displayOrder) {
+    const dayName = dayLabel[key];
+    const row = document.createElement("tr");
 
-      if (i === todayIndex) {
-        row.classList.add("today-row");
-      }
-
-      const people = schedule[key] && schedule[key].length
-        ? schedule[key].join(", ")
-        : "—";
-
-      const tdDay = document.createElement("td");
-      tdDay.textContent = dayName;
-      if (i === todayIndex) {
-        const badge = document.createElement("span");
-        badge.className = "today-badge";
-        badge.textContent = "Today";
-        tdDay.appendChild(badge);
-      }
-
-      const tdHours = document.createElement("td");
-      tdHours.textContent = formatHours(key);
-
-      const tdPeople = document.createElement("td");
-      tdPeople.textContent = people;
-
-      row.appendChild(tdDay);
-      row.appendChild(tdHours);
-      row.appendChild(tdPeople);
-
-      tbody.appendChild(row);
+    if (key === todayKey) {
+      row.classList.add("today-row");
     }
 
-    updateNowCard();
-    setInterval(updateNowCard, 60000);
+    const people = schedule[key] && schedule[key].length
+      ? schedule[key].join(", ")
+      : "—";
+
+    const tdDay = document.createElement("td");
+    tdDay.textContent = dayName;
+    if (key === todayKey) {
+      const badge = document.createElement("span");
+      badge.className = "today-badge";
+      badge.textContent = "Today";
+      tdDay.appendChild(badge);
+    }
+
+    const tdHours = document.createElement("td");
+    tdHours.textContent = formatHours(key);
+
+    const tdPeople = document.createElement("td");
+    tdPeople.textContent = people;
+
+    row.appendChild(tdDay);
+    row.appendChild(tdHours);
+    row.appendChild(tdPeople);
+
+    tbody.appendChild(row);
   }
+
+  updateNowCard();
+  setInterval(updateNowCard, 60000);
+}
+
 
   function updateNowCard() {
     const now = new Date();
@@ -383,7 +402,7 @@
       statusText.textContent = "Closed";
     }
 
-    nowTitle.textContent = dayNames[todayIndex];
+    nowTitle.textContent = dayLabel[todayKey];
     nowSubtitle.textContent = formatHours(todayKey);
 
     const peopleToday = schedule[todayKey] || [];
