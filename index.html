@@ -225,15 +225,15 @@
   let schedule = {};
   let businessHours = {};
 
-  const dayNames = [
-    "Sunday", "Monday", "Tuesday", "Wednesday",
-    "Thursday", "Friday", "Saturday"
-  ];
-
-  const keyByIndex = [
-    "sunday", "monday", "tuesday", "wednesday",
-    "thursday", "friday", "saturday"
-  ];
+ const dayNames = [
+      "Monday", "Tuesday", "Wednesday",
+      "Thursday", "Friday", "Saturday", "Sunday" 
+    ];
+  
+    const keyByIndex = [
+      "monday", "tuesday", "wednesday",
+      "thursday", "friday", "saturday", "sunday"
+    ];
 
  async function loadScheduleFromSheet() {
   const res = await fetch(SHEET_CSV_URL);
