@@ -218,61 +218,77 @@
   </div>
 
   <script>
-    // ====== CONFIGURACIÓN FÁCIL DE EDITAR ======
-
-    // Quién trabaja cada día (puedes editar esto cuando cambien roles)
-    const schedule = {
-      sunday: ["Jonathan"],
-      monday: ["Martin", "Jonathan"],
-      tuesday: ["Martin", "Jonathan"],
-      wednesday: ["Martin", "Jonathan"],
-      thursday: ["Martin"],
-      friday: ["Martin"],
-      saturday: ["Jonathan"]
-    };
-
-    // Horario de operación por día
-    // Formato 24h: { open: "HH:MM", close: "HH:MM" }
-    const businessHours = {
-      sunday:   { open: "10:00", close: "18:00" },
-      monday:   { open: "10:00", close: "18:00" },
-      tuesday:  { open: "10:00", close: "18:00" },
-      wednesday:{ open: "10:00", close: "18:00" },
-      thursday: { open: "10:00", close: "18:00" },
-      friday:   { open: "10:00", close: "21:00" },
-      saturday: { open: "10:00", close: "21:00" }
-    };
-
+    // ====== CONFIG: URL of your published Google Sheet CSV ======
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_P-MDtJ5_22Dftrk9JC9gQmaWzIM_YLBVEJ7n_hyU4bm4PSgzUbWOdIB-e184eJpaL2SUqB92tumS/pubhtml";
+  
+    // These will be filled dynamically from the sheet
+    let schedule = {};
+    let businessHours = {};
+  
     const dayNames = [
       "Sunday", "Monday", "Tuesday", "Wednesday",
       "Thursday", "Friday", "Saturday"
     ];
-
+  
     const keyByIndex = [
       "sunday", "monday", "tuesday", "wednesday",
       "thursday", "friday", "saturday"
     ];
-
-    // ====== LÓGICA ======
-
+  
+    async function loadScheduleFromSheet() {
+      const res = await fetch(SHEET_CSV_URL);
+      const csv = await res.text();
+  
+      const lines = csv.trim().split("\n");
+      const header = lines[0].split(",");
+  
+      const idxDay   = header.indexOf("day_key");
+      const idxOpen  = header.indexOf("open");
+      const idxClose = header.indexOf("close");
+      const idxOn    = header.indexOf("on_duty");
+  
+      const sched = {};
+      const hours = {};
+  
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const cols = lines[i].split(",");
+  
+        const dayKey = cols[idxDay].trim().toLowerCase();
+        const open   = cols[idxOpen].trim();
+        const close  = cols[idxClose].trim();
+        const onDutyRaw = cols[idxOn] ? cols[idxOn].trim() : "";
+  
+        const people = onDutyRaw
+          ? onDutyRaw.split(/[;|]/).map(p => p.trim()).filter(Boolean)
+          : [];
+  
+        sched[dayKey] = people;
+        hours[dayKey] = { open, close };
+      }
+  
+      schedule = sched;
+      businessHours = hours;
+    }
+  
     function isOpenNow(dayKey, now) {
       const hours = businessHours[dayKey];
       if (!hours) return false;
-
+  
       const [openH, openM] = hours.open.split(":").map(Number);
       const [closeH, closeM] = hours.close.split(":").map(Number);
-
+  
       const openMinutes = openH * 60 + openM;
       const closeMinutes = closeH * 60 + closeM;
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
+  
       return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
     }
-
+  
     function formatHours(dayKey) {
       const hours = businessHours[dayKey];
       if (!hours) return "Closed";
-
+  
       const to12h = (timeStr) => {
         const [hStr, mStr] = timeStr.split(":");
         let h = Number(hStr);
@@ -282,30 +298,31 @@
         else if (h > 12) h -= 12;
         return `${h}:${m}${suffix}`;
       };
-
+  
       return `${to12h(hours.open)} – ${to12h(hours.close)}`;
     }
-
+  
     function initSchedule() {
       const tbody = document.getElementById("schedule-body");
+      tbody.innerHTML = "";
+  
       const now = new Date();
-      const todayIndex = now.getDay(); // 0=Sun..6=Sat
+      const todayIndex = now.getDay();
       const todayKey = keyByIndex[todayIndex];
-
-      // Rellenar tabla semanal
+  
       for (let i = 0; i < 7; i++) {
         const dayName = dayNames[i];
         const key = keyByIndex[i];
         const row = document.createElement("tr");
-
+  
         if (i === todayIndex) {
           row.classList.add("today-row");
         }
-
+  
         const people = schedule[key] && schedule[key].length
           ? schedule[key].join(", ")
           : "—";
-
+  
         const tdDay = document.createElement("td");
         tdDay.textContent = dayName;
         if (i === todayIndex) {
@@ -314,42 +331,40 @@
           badge.textContent = "Today";
           tdDay.appendChild(badge);
         }
-
+  
         const tdHours = document.createElement("td");
         tdHours.textContent = formatHours(key);
-
+  
         const tdPeople = document.createElement("td");
         tdPeople.textContent = people;
-
+  
         row.appendChild(tdDay);
         row.appendChild(tdHours);
         row.appendChild(tdPeople);
-
+  
         tbody.appendChild(row);
       }
-
+  
       updateNowCard();
-      // Actualiza cada 60 segundos por si dejas la página siempre abierta
       setInterval(updateNowCard, 60000);
     }
-
+  
     function updateNowCard() {
       const now = new Date();
       const todayIndex = now.getDay();
       const todayKey = keyByIndex[todayIndex];
-
+  
       const statusPill = document.getElementById("status-pill");
       const statusText = document.getElementById("status-text");
       const nowTitle = document.getElementById("now-title");
       const nowSubtitle = document.getElementById("now-subtitle");
       const nowPeople = document.getElementById("now-people");
       const nowTime = document.getElementById("now-time");
-
+  
       const open = isOpenNow(todayKey, now);
-
-      // Limpia clases previas
+  
       statusPill.classList.remove("status-open", "status-closed");
-
+  
       if (open) {
         statusPill.classList.add("status-open");
         statusText.textContent = "Open";
@@ -357,10 +372,10 @@
         statusPill.classList.add("status-closed");
         statusText.textContent = "Closed";
       }
-
+  
       nowTitle.textContent = dayNames[todayIndex];
       nowSubtitle.textContent = formatHours(todayKey);
-
+  
       const peopleToday = schedule[todayKey] || [];
       if (open && peopleToday.length) {
         nowPeople.innerHTML = `On duty now: <span>${peopleToday.join(", ")}</span>`;
@@ -369,14 +384,23 @@
       } else {
         nowPeople.textContent = "No one assigned today.";
       }
-
+  
       const pad = (n) => n.toString().padStart(2, "0");
       const hours = pad(now.getHours());
       const minutes = pad(now.getMinutes());
       nowTime.textContent = `Current time: ${hours}:${minutes}`;
     }
-
-    document.addEventListener("DOMContentLoaded", initSchedule);
+  
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        await loadScheduleFromSheet();
+      } catch (err) {
+        console.error("Error loading schedule from sheet:", err);
+      }
+      initSchedule();
+    });
   </script>
+  
 </body>
 </html>
+
